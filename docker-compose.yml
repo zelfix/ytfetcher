@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  ytfetcher:
+    build: .
+    container_name: ytfetcher-bot
+    env_file: .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - downloads:/srv/ytfetcher/downloads
+    restart: unless-stopped
+
+volumes:
+  downloads:
+    driver: local

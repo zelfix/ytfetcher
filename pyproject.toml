@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ytfetcher"
+version = "0.1.0"
+description = "Telegram bot for downloading media via yt-dlp"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "python-telegram-bot>=20.7,<21",
+    "yt-dlp>=2024.4.9",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.12",
+    "ruff>=0.1.9",
+    "pytest>=8.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ytfetcher*"]
+exclude = ["tests*"]
