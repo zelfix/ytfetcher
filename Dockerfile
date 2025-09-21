@@ -22,6 +22,6 @@ RUN chmod +x /app/entrypoint.sh
 
 RUN pip install --no-cache-dir .
 
-EXPOSE 8080
+EXPOSE 80 443
 
 CMD ["/app/entrypoint.sh"]
