@@ -5,12 +5,27 @@ services:
     build: .
     container_name: ytfetcher-bot
     env_file: .env
+    environment:
+      - DOWNLOAD_ROOT=/srv/ytfetcher/downloads
     ports:
       - "8080:8080"
     volumes:
       - downloads:/srv/ytfetcher/downloads
+      - certbot-www:/var/www/certbot
+      - certbot-etc:/etc/letsencrypt
     restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot:latest
+    profiles: ["certbot"]
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
 
 volumes:
   downloads:
+    driver: local
+  certbot-www:
+    driver: local
+  certbot-etc:
     driver: local

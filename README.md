@@ -9,7 +9,7 @@ Telegram бот, который принимает ссылку на видео,
    source .venv/bin/activate
    pip install -e .[dev]
    ```
-2. Скопируйте `.env.example` в `.env` и заполните переменные (`TELEGRAM_BOT_TOKEN`, `PUBLIC_BASE_URL`, при необходимости `DOWNLOAD_ROOT`).
+2. Скопируйте `.env.example` в `.env` и заполните переменные (`TELEGRAM_BOT_TOKEN`, `PUBLIC_BASE_URL`, при необходимости `DOWNLOAD_ROOT`). Если планируется HTTPS прямо в контейнере, также укажите `ENABLE_TLS=true`, `SERVER_NAME` и пути к сертификатам.
 3. Убедитесь, что в системе установлен `ffmpeg` и `nginx`, либо поднимите их отдельно.
 4. Запустите приложение:
    ```bash
@@ -38,7 +38,14 @@ Telegram бот, который принимает ссылку на видео,
    ```bash
    docker compose up -d
    ```
-3. Загрузки будут храниться в томе `downloads` (можно посмотреть путь через `docker volume inspect downloads`).
-4. Остановить сервис: `docker compose down` (используйте `--volumes`, если хотите удалить накопленные файлы).
+3. Чтобы получить сертификат Let’s Encrypt через webroot-проверку:
+   ```bash
+   docker compose run --rm --profile certbot certbot certonly \
+     --webroot -w /var/www/certbot \
+     -d "$SERVER_NAME"
+   ```
+   После успешной выдачи включите TLS (`ENABLE_TLS=true`) и перезапустите сервис: `docker compose up -d --build`. Если контейнер не найдёт указанные файлы сертификата/ключа, он продолжит работать по HTTP и выведет предупреждение в лог.
+4. Загрузки будут храниться в томе `downloads` (посмотрите путь через `docker volume inspect downloads`).
+5. Остановить сервис: `docker compose down` (используйте `--volumes`, если хотите удалить накопленные файлы).
 
 Логи приложения и nginx доступны через `docker logs`. Для очистки старых файлов добавьте внешнюю задачу (cron/скрипт) по вашему усмотрению.

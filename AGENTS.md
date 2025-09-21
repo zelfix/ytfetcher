@@ -1,12 +1,12 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-`main.py` запускает Telegram бота, предварительно загружая переменные из `.env` через `python-dotenv`. Исходники лежат в пакете `ytfetcher/`, где `bot.py` содержит обработчики, выдающие ссылки на файлы, опубликованные nginx из каталога загрузок; названия файлов очищаются и дополнительно маркируются случайным суффиксом. Docker-контейнер использует конфиги `nginx.conf` и `supervisord.conf`, чтобы одновременно поднимать веб-сервер и бота, а `docker-compose.yml` заводит именованный том `downloads` для долговременного хранения. Тесты храните в `tests/`, зеркалируя структуру пакета. При необходимости добавляйте статические шаблоны в `assets/`.
+`main.py` запускает Telegram бота, предварительно загружая переменные из `.env` через `python-dotenv`. Исходники лежат в пакете `ytfetcher/`, где `bot.py` содержит обработчики, выдающие ссылки на файлы, опубликованные nginx из каталога загрузок; названия файлов очищаются и дополнительно маркируются случайным суффиксом. Контейнер генерирует `nginx.conf` при старте (`entrypoint.sh`), поддерживает HTTP/HTTPS и отдачу ACME-челленджей для Let’s Encrypt. `docker-compose.yml` поднимает сервисы `ytfetcher` и `certbot`, заводит именованные тома `downloads`, `certbot-www`, `certbot-etc`. Тесты храните в `tests/`, зеркалируя структуру пакета. При необходимости добавляйте статические шаблоны в `assets/`.
 
 ## Build, Test, and Development Commands
 - `python -m venv .venv && source .venv/bin/activate`: локальное окружение для разработки.
 - `pip install -e .[dev]`: ставит пакет, `yt-dlp`, Telegram SDK и dev-инструменты.
-- `python main.py`: запускает бота, читая настройки из `.env` или окружения (`TELEGRAM_BOT_TOKEN`, `PUBLIC_BASE_URL`, `DOWNLOAD_ROOT`).
+- `python main.py`: запускает бота, читая настройки из `.env` или окружения (`TELEGRAM_BOT_TOKEN`, `PUBLIC_BASE_URL`, `DOWNLOAD_ROOT`, `ENABLE_TLS`, `SERVER_NAME`, пути к сертификатам).
 - `docker build -t ytfetcher . && docker run -p 8080:8080 …`: самый быстрый способ протестировать связку бота и nginx.
 
 ## Coding Style & Naming Conventions
